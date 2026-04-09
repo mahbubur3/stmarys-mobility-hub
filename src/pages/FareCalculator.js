@@ -8,8 +8,8 @@ function FareCalculator() {
     const calculateCost = () => {
         let rate = 0;
 
-        if (mode === "bus") rate = 1.5;
-        if (mode === "rail") rate = 2.5;
+        if (mode === "bus") rate = 1.7;
+        if (mode === "rail") rate = 3.5;
         if (mode === "cycling") rate = 0;
         if (mode === "walking") rate = 0;
 
