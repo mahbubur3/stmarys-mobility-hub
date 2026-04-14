@@ -10,6 +10,7 @@ function Navbar() {
         <li><Link to="/fare">Fare Calculator</Link></li>
         <li><Link to="/finder">Route Finder</Link></li>
         <li><Link to="/updates">Live Updates</Link></li>
+        <li><Link to="/dashboard">Dashboard</Link></li>
       </ul>
     </nav>
   );
