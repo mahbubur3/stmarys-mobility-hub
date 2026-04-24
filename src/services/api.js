@@ -5,9 +5,7 @@ const APP_KEY = process.env.REACT_APP_TFL_KEY;
 
 // Fetch status of transport
 export const getLineStatus = async () => {
-  const response = await axios.get(
-    `https://api.tfl.gov.uk/Line/Mode/tube,overground,dlr/Status`,
-    {
+  const response = await axios.get(`https://api.tfl.gov.uk/Line/Mode/tube,overground,dlr/Status`, {
       params: {
         app_key: APP_KEY,
       },
@@ -30,3 +28,19 @@ export const searchLocation = async (query) => {
 
   return response.data.matches.slice(0, 3);
 };
+
+// Fetch journey
+export const getJourney = async (from, to) => {
+  const response = await axios.get(
+    `https://api.tfl.gov.uk/Journey/JourneyResults/${from}/to/${to}`,
+    {
+      params: {
+        app_key: APP_KEY,
+      },
+    }
+  );
+  console.log("Journey API response:", response.data);
+
+  return response.data.journeys;
+};
+

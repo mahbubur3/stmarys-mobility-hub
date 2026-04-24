@@ -1,19 +1,24 @@
+import { Navbar, Nav, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-function Navbar() {
+function MyNavbar() {
   return (
-    <nav>
-      <h2>St Mary's Mobility Hub</h2>
-      <ul>
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/options">Transit Options</Link></li>
-        <li><Link to="/fare">Fare Calculator</Link></li>
-        <li><Link to="/finder">Route Finder</Link></li>
-        <li><Link to="/updates">Live Updates</Link></li>
-        <li><Link to="/dashboard">Dashboard</Link></li>
-      </ul>
-    </nav>
+    <Navbar bg="dark" variant="dark" expand="lg">
+      <Container className="outfit-text">
+        <Navbar.Brand as={Link} to="/">Plann&gooo</Navbar.Brand>
+        <Navbar.Toggle />
+        <Navbar.Collapse>
+          <Nav className="ms-auto">
+            <Nav.Link as={Link} to="/">Home</Nav.Link>
+            <Nav.Link as={Link} to="/options">Options</Nav.Link>
+            <Nav.Link as={Link} to="/fare">Fare</Nav.Link>
+            <Nav.Link as={Link} to="/finder">Route</Nav.Link>
+            <Nav.Link as={Link} to="/updates">Updates</Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 }
 
-export default Navbar;
+export default MyNavbar;

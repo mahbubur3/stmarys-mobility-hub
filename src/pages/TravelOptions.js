@@ -1,44 +1,25 @@
-
-
-// function TravelOptions() {
-//   return (
-//     <div>
-//       <h1>Travel Options</h1>
-//       {options.map((option, index) => (
-//         <div key={index}>
-//           <h2>{option.name}</h2>
-//           <p>{option.description}</p>
-//           <p><strong>Pros:</strong> {option.advantages}</p>
-//           <p><strong>Cons:</strong> {option.limitations}</p>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// }
-
-// export default TravelOptions;
-
-
-
 import options from "../data/options";
-import { Card, CardContent, Typography } from "@mui/material";
+import { Container, Row, Col, Card } from "react-bootstrap";
 
 function TravelOptions() {
   return (
-    <div>
-      <h1>Travel Options</h1>
-
-      {options.map((option, index) => (
-        <Card key={index} style={{ margin: "10px" }}>
-          <CardContent>
-            <Typography variant="h5">{option.name}</Typography>
-            <Typography>{option.description}</Typography>
-            <Typography>Pros: {option.advantages}</Typography>
-            <Typography>Cons: {option.limitations}</Typography>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+    <Container className="mt-4">
+      <h2 className="mb-4 outfit-text text-center fw-bold">Travel Options</h2>
+      <Row>
+        {options.map((option, index) => (
+          <Col md={4} sm={6} xs={12} key={index} className="mb-4 inter-text">
+            <Card className="h-100 shadow border-0">
+              <Card.Body>
+                <Card.Title className="fw-bold">{option.name}</Card.Title>
+                <Card.Text>{option.description}</Card.Text>
+                <p><strong>Pros:</strong> {option.advantages}</p>
+                <p><strong>Cons:</strong> {option.limitations}</p>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    </Container>
   );
 }
 
