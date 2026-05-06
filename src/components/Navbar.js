@@ -5,7 +5,7 @@ function MyNavbar() {
   return (
     <Navbar bg="dark" variant="dark" expand="lg">
       <Container className="outfit-text">
-        <Navbar.Brand as={Link} to="/">Plann&gooo</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/">St Mary's Mobility Hub</Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
           <Nav className="ms-auto">

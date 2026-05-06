@@ -18,29 +18,30 @@ export const getLineStatus = async () => {
 // Start and ending point
 export const searchLocation = async (query) => {
   const response = await axios.get(
-    `https://api.tfl.gov.uk/StopPoint/Search/${query}`,
+    `https://api.tfl.gov.uk/StopPoint/Search/${encodeURIComponent(query)}`,
     {
       params: {
         app_key: APP_KEY,
+        maxResults: 5,
       },
     }
   );
 
-  return response.data.matches.slice(0, 3);
+  return response.data.matches || [];
 };
 
 // Fetch journey
-export const getJourney = async (from, to) => {
+export const getJourney = async (from, to, fromName, toName) => {
   const response = await axios.get(
-    `https://api.tfl.gov.uk/Journey/JourneyResults/${from}/to/${to}`,
+    `https://api.tfl.gov.uk/Journey/JourneyResults/${encodeURIComponent(from)}/to/${encodeURIComponent(to)}`,
     {
       params: {
         app_key: APP_KEY,
+        fromName,
+        toName,
       },
     }
   );
-  console.log("Journey API response:", response.data);
 
   return response.data.journeys;
 };
-

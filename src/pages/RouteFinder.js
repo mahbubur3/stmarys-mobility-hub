@@ -1,209 +1,211 @@
-// import { useState } from "react";
-// import { searchLocation } from "../services/api";
-
-// function RouteFinder() {
-//   const [start, setStart] = useState("");
-//   const [end, setEnd] = useState("");
-//   const [results, setResults] = useState([]);
-
-//   const planJourney = async () => {
-//     try {
-//       const startResults = await searchLocation(start);
-//       const endResults = await searchLocation(end);
-
-//       setResults([
-//         `Start: ${startResults[0]?.name}`,
-//         `End: ${endResults[0]?.name}`,
-//         "Suggested Route: Tube → Walk → Bus",
-//       ]);
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <h1>Journey Planner</h1>
-
-//       <input
-//         type="text"
-//         placeholder="Start location"
-//         value={start}
-//         onChange={(e) => setStart(e.target.value)}
-//       />
-
-//       <input
-//         type="text"
-//         placeholder="End location"
-//         value={end}
-//         onChange={(e) => setEnd(e.target.value)}
-//       />
-
-//       <button onClick={planJourney}>Plan Journey</button>
-
-//       {results.map((item, index) => (
-//         <p key={index}>{item}</p>
-//       ))}
-//     </div>
-//   );
-// }
-
-// export default RouteFinder;
-
-
-
-
-// import { useState } from "react";
-// import { Container, Form, Button, Card } from "react-bootstrap";
-
-// function RouteFinder() {
-//   const [start, setStart] = useState("");
-//   const [end, setEnd] = useState("");
-//   const [results, setResults] = useState([]);
-
-//   const planJourney = () => {
-//     setResults([
-//       `Start: ${start}`,
-//       `End: ${end}`,
-//       "Route: Tube → Walk → Bus",
-//     ]);
-//   };
-
-//   return (
-//     <Container className="mt-4">
-//       <Card className="p-4 shadow">
-//         <h2>Journey Planner</h2>
-
-//         <Form>
-//           <Form.Control
-//             className="mb-3"
-//             placeholder="Start location"
-//             value={start}
-//             onChange={(e) => setStart(e.target.value)}
-//           />
-
-//           <Form.Control
-//             className="mb-3"
-//             placeholder="End location"
-//             value={end}
-//             onChange={(e) => setEnd(e.target.value)}
-//           />
-
-//           <Button onClick={planJourney}>Plan Journey</Button>
-//         </Form>
-
-//         <div className="mt-3">
-//           {results.map((item, i) => (
-//             <p key={i}>{item}</p>
-//           ))}
-//         </div>
-//       </Card>
-//     </Container>
-//   );
-// }
-
-// export default RouteFinder;
-
-
-
 import { useState } from "react";
-import { Container, Card, Form, Button } from "react-bootstrap";
-import { searchLocation, getJourney } from "../services/api";
+import { Alert, Badge, Button, Card, Container, Form, Spinner } from "react-bootstrap";
+import { getJourney, searchLocation } from "../services/api";
 
 function RouteFinder() {
-const [start, setStart] = useState("");
-const [end, setEnd] = useState("");
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
+  const [startResults, setStartResults] = useState([]);
+  const [endResults, setEndResults] = useState([]);
+  const [selectedStart, setSelectedStart] = useState(null);
+  const [selectedEnd, setSelectedEnd] = useState(null);
+  const [journeys, setJourneys] = useState([]);
+  const [loadingJourney, setLoadingJourney] = useState(false);
+  const [error, setError] = useState("");
 
-const [startResults, setStartResults] = useState([]);
-const [endResults, setEndResults] = useState([]);
+  const toJourneyPoint = (item) => ({
+    id: item.id,
+    name: item.name,
+    lat: item.lat,
+    lon: item.lon,
+    journeyValue: `${item.lat},${item.lon}`,
+  });
 
-const [selectedStart, setSelectedStart] = useState(null);
-const [selectedEnd, setSelectedEnd] = useState(null);
+  const handleStartSearch = async (value) => {
+    setStart(value);
+    setSelectedStart(null);
+    setJourneys([]);
+    setError("");
 
-const [journeys, setJourneys] = useState([]);
+    if (value.length > 2) {
+      try {
+        const results = await searchLocation(value);
+        setStartResults(results);
+      } catch (searchError) {
+        console.error("Start search error:", searchError.response?.data || searchError.message);
+        setStartResults([]);
+        setError("Could not search for that start location. Please try again.");
+      }
+    } else {
+      setStartResults([]);
+    }
+  };
 
-const handleStartSearch = async (value) => {
-  setStart(value);
-  if (value.length > 2) {
-    const results = await searchLocation(value);
-    setStartResults(results);
-  }
-};
+  const handleEndSearch = async (value) => {
+    setEnd(value);
+    setSelectedEnd(null);
+    setJourneys([]);
+    setError("");
 
-const handleEndSearch = async (value) => {
-  setEnd(value);
-  if (value.length > 2) {
-    const results = await searchLocation(value);
-    setEndResults(results);
-  }
-};
+    if (value.length > 2) {
+      try {
+        const results = await searchLocation(value);
+        setEndResults(results);
+      } catch (searchError) {
+        console.error("End search error:", searchError.response?.data || searchError.message);
+        setEndResults([]);
+        setError("Could not search for that destination. Please try again.");
+      }
+    } else {
+      setEndResults([]);
+    }
+  };
 
-const planJourney = async () => {
-  // console.log("FROM:", selectedStart);
-  // console.log("TO:", selectedEnd);
+  const planJourney = async () => {
+    if (!selectedStart || !selectedEnd) {
+      setError("Please choose both locations from the suggestions.");
+      return;
+    }
 
-  if (!selectedStart || !selectedEnd) {
-    alert("Please select valid locations");
-    return;
-  }
+    setError("");
+    setLoadingJourney(true);
 
-  try {
-    const data = await getJourney(selectedStart.id, selectedEnd.id);
-    setJourneys(data);
-  } catch (error) {
-    alert("Failed to fetch");
-  }
-};
+    try {
+      const data = await getJourney(
+        selectedStart.journeyValue,
+        selectedEnd.journeyValue,
+        selectedStart.name,
+        selectedEnd.name
+      );
+      setJourneys(data || []);
+    } catch (error) {
+      console.error("Journey API error:", error.response?.data || error.message);
+      setJourneys([]);
+      setError("Could not fetch that journey. Please choose both locations from the suggestions.");
+    } finally {
+      setLoadingJourney(false);
+    }
+  };
+
+  const swapLocations = () => {
+    setStart(end);
+    setEnd(start);
+    setSelectedStart(selectedEnd);
+    setSelectedEnd(selectedStart);
+    setStartResults([]);
+    setEndResults([]);
+    setJourneys([]);
+    setError("");
+  };
 
   return (
-    <Container className="mt-4">
-      <Card className="border-0">
-        <h2 className="outfit-text fw-bold text-center">Journey Planner</h2>
-        <Form.Control placeholder="Start location" value={start} onChange={(e) => handleStartSearch(e.target.value)}/>
-        <div className="border mb-2">
+    <Container className="page-section route-page">
+      <Card className="app-panel">
+        <Card.Body>
+        <div className="route-header">
+          <div>
+            <h2 className="outfit-text fw-bold mb-1">Plan a route</h2>
+            <p className="text-muted mb-0">Search and select both places to see live TfL journey options.</p>
+          </div>
+          <Button variant="outline-primary" onClick={swapLocations} disabled={!start && !end}>Swap</Button>
+        </div>
+
+        {error && (
+          <Alert variant="warning" className="mt-3 mb-3">
+            {error}
+          </Alert>
+        )}
+
+        <Form.Group className="mb-3">
+          <Form.Label className="fw-semibold">From</Form.Label>
+        <Form.Control
+          placeholder="Start location"
+          value={start}
+          onChange={(event) => handleStartSearch(event.target.value)}
+        />
+        <div className="suggestion-list">
           {startResults.map((item) => (
-            <div key={item.id} style={{ cursor: "pointer", padding: "5px" }} onClick={() => {
-                // setSelectedStart(item);
-                setSelectedStart({
-                  id: item.naptanId || item.id,
-                  name: item.name
-                });
+            <button
+              type="button"
+              key={item.id}
+              className="suggestion-item"
+              onClick={() => {
+                setSelectedStart(toJourneyPoint(item));
                 setStart(item.name);
                 setStartResults([]);
-              }}>
-              {item.name}
-            </div>
+              }}
+            >
+              <span>{item.name}</span>
+              <small>{item.modes?.join(", ")}</small>
+            </button>
           ))}
         </div>
-        <Form.Control placeholder="End location" value={end} onChange={(e) => handleEndSearch(e.target.value)}/>
+        </Form.Group>
 
-        <div className="border mb-2">
+        <Form.Group className="mb-3">
+          <Form.Label className="fw-semibold">To</Form.Label>
+        <Form.Control
+          placeholder="End location"
+          value={end}
+          onChange={(event) => handleEndSearch(event.target.value)}
+        />
+        <div className="suggestion-list">
           {endResults.map((item) => (
-            <div key={item.id} style={{ cursor: "pointer", padding: "5px" }} onClick={() => {
-                // setSelectedEnd(item);
-                setSelectedEnd({
-                  id: item.naptanId || item.id,
-                  name: item.name
-                });
+            <button
+              type="button"
+              key={item.id}
+              className="suggestion-item"
+              onClick={() => {
+                setSelectedEnd(toJourneyPoint(item));
                 setEnd(item.name);
                 setEndResults([]);
-              }}>
-              {item.name}
-            </div>
+              }}
+            >
+              <span>{item.name}</span>
+              <small>{item.modes?.join(", ")}</small>
+            </button>
           ))}
         </div>
-        
-        <div className="mt-3">
-          {journeys.map((journey, i) => (
-            <div key={i} className="mb-3 p-2 border">
-              <p><strong>Duration:</strong> {journey.duration} mins</p>
-              {journey.legs.map((leg, index) => (
-                <p key={index}>{leg.mode.name.toUpperCase()} → {leg.instruction.summary}</p>
-              ))}
-            </div>
+        </Form.Group>
+
+        <Button
+          className="w-100"
+          onClick={planJourney}
+          disabled={!selectedStart || !selectedEnd || loadingJourney}
+        >
+          {loadingJourney ? (
+            <>
+              <Spinner animation="border" size="sm" className="me-2" />
+              Finding route...
+            </>
+          ) : (
+            "Plan Journey"
+          )}
+        </Button>
+
+        <div className="route-results">
+          {journeys.map((journey, journeyIndex) => (
+            <Card key={journeyIndex} className="journey-card">
+              <Card.Body>
+                <div className="journey-summary">
+                  <h3>{journey.duration} mins</h3>
+                  <Badge bg={journey.alternativeRoute ? "secondary" : "success"}>
+                    {journey.alternativeRoute ? "Alternative" : "Recommended"}
+                  </Badge>
+                </div>
+                <div className="journey-legs">
+                  {journey.legs.map((leg, legIndex) => (
+                    <div key={legIndex} className="journey-leg">
+                      <strong>{leg.mode.name}</strong>
+                      <span>{leg.instruction.summary}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card.Body>
+            </Card>
           ))}
         </div>
-        <Button className="mt-3" onClick={planJourney} disabled={!selectedStart || !selectedEnd}>Plan Journey</Button>
+        </Card.Body>
       </Card>
     </Container>
   );
