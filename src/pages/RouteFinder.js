@@ -100,113 +100,114 @@ function RouteFinder() {
 
   return (
     <Container className="page-section route-page">
-      <Card className="app-panel">
+      <div className="page-heading">
+        <h2 className="outfit-text fw-bold mb-2">Plan a Route</h2>
+        <p className="text-muted mb-0">
+          Search and select both places to see live public transport journey options.
+        </p>
+      </div>
+
+      <Card className="app-panel search-panel">
         <Card.Body>
-        <div className="route-header">
-          <div>
-            <h2 className="outfit-text fw-bold mb-1">Plan a route</h2>
-            <p className="text-muted mb-0">Search and select both places to see live TfL journey options.</p>
-          </div>
-          <Button variant="outline-primary" onClick={swapLocations} disabled={!start && !end}>Swap</Button>
-        </div>
-
-        {error && (
-          <Alert variant="warning" className="mt-3 mb-3">
-            {error}
-          </Alert>
-        )}
-
-        <Form.Group className="mb-3">
-          <Form.Label className="fw-semibold">From</Form.Label>
-        <Form.Control
-          placeholder="Start location"
-          value={start}
-          onChange={(event) => handleStartSearch(event.target.value)}
-        />
-        <div className="suggestion-list">
-          {startResults.map((item) => (
-            <button
-              type="button"
-              key={item.id}
-              className="suggestion-item"
-              onClick={() => {
-                setSelectedStart(toJourneyPoint(item));
-                setStart(item.name);
-                setStartResults([]);
-              }}
-            >
-              <span>{item.name}</span>
-              <small>{item.modes?.join(", ")}</small>
-            </button>
-          ))}
-        </div>
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label className="fw-semibold">To</Form.Label>
-        <Form.Control
-          placeholder="End location"
-          value={end}
-          onChange={(event) => handleEndSearch(event.target.value)}
-        />
-        <div className="suggestion-list">
-          {endResults.map((item) => (
-            <button
-              type="button"
-              key={item.id}
-              className="suggestion-item"
-              onClick={() => {
-                setSelectedEnd(toJourneyPoint(item));
-                setEnd(item.name);
-                setEndResults([]);
-              }}
-            >
-              <span>{item.name}</span>
-              <small>{item.modes?.join(", ")}</small>
-            </button>
-          ))}
-        </div>
-        </Form.Group>
-
-        <Button
-          className="w-100"
-          onClick={planJourney}
-          disabled={!selectedStart || !selectedEnd || loadingJourney}
-        >
-          {loadingJourney ? (
-            <>
-              <Spinner animation="border" size="sm" className="me-2" />
-              Finding route...
-            </>
-          ) : (
-            "Plan Journey"
+          {error && (
+            <Alert variant="warning" className="mb-3">
+              {error}
+            </Alert>
           )}
-        </Button>
+          <div className="route-form-grid">
+            <Form.Group>
+              <Form.Label className="fw-semibold">From</Form.Label>
+              <Form.Control
+                placeholder="Start location"
+                value={start}
+                onChange={(event) => handleStartSearch(event.target.value)}/>
+              <div className="suggestion-list">
+                {startResults.map((item) => (
+                  <button
+                    type="button"
+                    key={item.id}
+                    className="suggestion-item"
+                    onClick={() => {
+                      setSelectedStart(toJourneyPoint(item));
+                      setStart(item.name);
+                      setStartResults([]);
+                    }}>
+                    <span>{item.name}</span>
+                    <small>{item.modes?.join(", ")}</small>
+                  </button>
+                ))}
+              </div>
+            </Form.Group>
+            <div className="route-swap-wrap">
+              <Button variant="outline-primary" onClick={swapLocations} disabled={!start && !end}>
+              SWAP
+              </Button>
+            </div>
 
-        <div className="route-results">
-          {journeys.map((journey, journeyIndex) => (
-            <Card key={journeyIndex} className="journey-card">
-              <Card.Body>
-                <div className="journey-summary">
-                  <h3>{journey.duration} mins</h3>
-                  <Badge bg={journey.alternativeRoute ? "secondary" : "success"}>
-                    {journey.alternativeRoute ? "Alternative" : "Recommended"}
-                  </Badge>
-                </div>
-                <div className="journey-legs">
-                  {journey.legs.map((leg, legIndex) => (
-                    <div key={legIndex} className="journey-leg">
-                      <strong>{leg.mode.name}</strong>
-                      <span>{leg.instruction.summary}</span>
-                    </div>
-                  ))}
-                </div>
-              </Card.Body>
-            </Card>
-          ))}
-        </div>
+            <Form.Group>
+              <Form.Label className="fw-semibold">To</Form.Label>
+              <Form.Control
+                placeholder="End location"
+                value={end}
+                onChange={(event) => handleEndSearch(event.target.value)}/>
+              <div className="suggestion-list">
+                {endResults.map((item) => (
+                  <button
+                    type="button"
+                    key={item.id}
+                    className="suggestion-item"
+                    onClick={() => {
+                      setSelectedEnd(toJourneyPoint(item));
+                      setEnd(item.name);
+                      setEndResults([]);
+                    }}>
+                    <span>{item.name}</span>
+                    <small>{item.modes?.join(", ")}</small>
+                  </button>
+                ))}
+              </div>
+            </Form.Group>
+          </div>
+
+          <Button className="w-100 mt-3"
+            onClick={planJourney}
+            disabled={!selectedStart || !selectedEnd || loadingJourney}>
+            {loadingJourney ? (
+              <><Spinner animation="border" size="sm" className="me-2" />Finding route...</>
+            ) : (
+              "Plan Journey"
+            )}
+          </Button>
         </Card.Body>
       </Card>
+
+      {journeys.length > 0 && (
+        <section className="route-results-section">
+          <h3 className="result-heading">Route Options</h3>
+          <div className="route-results">
+            {journeys.map((journey, journeyIndex) => (
+              <Card key={journeyIndex} className="journey-card">
+                <Card.Body>
+                  <div className="journey-summary">
+                    <h3>{journey.duration} mins</h3>
+                    <Badge bg={journey.alternativeRoute ? "secondary" : "success"}>
+                      {journey.alternativeRoute ? "Alternative" : "Recommended"}
+                    </Badge>
+                  </div>
+                  <div className="journey-legs">
+                    {journey.legs.map((leg, legIndex) => (
+                      <div key={legIndex} className="journey-leg">
+                        <strong>{leg.mode.name}</strong>
+                        <span>{leg.instruction.summary}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Card.Body>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
     </Container>
   );
 }

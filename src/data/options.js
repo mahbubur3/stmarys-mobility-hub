@@ -1,27 +1,27 @@
 const options = [
   {
     name: "Bus",
-    description: "Good for saving money on long routes.",
-    advantages: "Very cheap",
-    limitations: "Gets stuck in traffic"
+    description: "Useful for short and medium local journeys with frequent stops.",
+    advantages: "Low fares, wide coverage, and good accessibility on many routes.",
+    limitations: "Journey times can change quickly during congestion or roadworks."
   },
   {
-    name: "Train",
-    description: "The fastest way to get across town.",
-    advantages: "Always on time",
-    limitations: "Costs more than the bus"
+    name: "Rail and Tube",
+    description: "Best for crossing London quickly or connecting between busy town centres.",
+    advantages: "Fast, predictable, and supported by live service updates.",
+    limitations: "More expensive than buses and can be disrupted by closures or crowding."
   },
   {
     name: "Cycling",
-    description: "A healthy way to travel short distances.",
-    advantages: "Free and eco-friendly",
-    limitations: "Hard to do in the rain"
+    description: "A flexible option for short trips, mixed-mode travel, and avoiding traffic.",
+    advantages: "Healthy, low-carbon, and often cheap when using your own bike.",
+    limitations: "Weather, road confidence, and bike parking can affect suitability."
   },
   {
     name: "Walking",
-    description: "Perfect for very short trips.",
-    advantages: "Totally free",
-    limitations: "Takes a long time"
+    description: "Ideal for first-mile and last-mile travel or very short local journeys.",
+    advantages: "Free, reliable, low-carbon, and easy to combine with public transport.",
+    limitations: "Slow for longer distances and less suitable in poor weather or at night."
   }
 ];
 

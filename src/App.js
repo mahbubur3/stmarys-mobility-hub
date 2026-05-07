@@ -1,13 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import TravelOptions from "./pages/TravelOptions";
 import FareCalculator from "./pages/FareCalculator";
 import RouteFinder from "./pages/RouteFinder";
 import LiveUpdates from "./pages/LiveUpdates";
-
-import "./styles/main.css"
+import NearbyTravel from "./pages/NearbyTravel";
+import "./styles/main.css";
 
 function App() {
     return (
@@ -18,6 +17,7 @@ function App() {
                 <Route path="/options" element={<TravelOptions />} />
                 <Route path="/fare" element={<FareCalculator />} />
                 <Route path="/finder" element={<RouteFinder />} />
+                <Route path="/nearby" element={<NearbyTravel />} />
                 <Route path="/updates" element={<LiveUpdates />} />
             </Routes>
         </Router>
